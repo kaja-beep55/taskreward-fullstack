@@ -39,7 +39,17 @@ const realAuthService = {
     }
     // Get profile from profiles table
     try {
-      const profile = await realServices.profileService.getProfile();
+      // Use authService.getUser() to get user ID, then fetch profile
+      const user = await realServices.authService.getUser();
+      if (!user) return null;
+      
+      const { data: profile, error } = await realServices.supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', user.id)
+        .single();
+      
+      if (error) return null;
       return profile;
     } catch {
       return null;
