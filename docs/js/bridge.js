@@ -37,12 +37,12 @@ const realAuthService = {
     if (!session) {
       return null;
     }
-    // Get profile from profiles table
+    // Get profile from profiles table using supabase client from realServices
     try {
-      // Use authService.getUser() to get user ID, then fetch profile
       const user = await realServices.authService.getUser();
       if (!user) return null;
       
+      // Use the supabase client directly from realServices
       const { data: profile, error } = await realServices.supabase
         .from('profiles')
         .select('*')
