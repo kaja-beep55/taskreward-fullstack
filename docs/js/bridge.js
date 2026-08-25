@@ -34,14 +34,16 @@ const realAuthService = {
   ...realServices.authService,
   async getProfile() {
     try {
+      // Check if we have a session
       const session = await realServices.authService.getSession();
-      if (!session) {
+      if (!session || !session.user) {
         return null;
       }
       // Use profileService from realServices to get profile
       const profile = await realServices.profileService.getProfile();
       return profile;
-    } catch {
+    } catch (err) {
+      console.warn('getProfile error:', err.message);
       return null;
     }
   },
