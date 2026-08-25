@@ -320,3 +320,50 @@ export async function ProfileEditPage() {
 export async function TaskHistoryPage() {
   return {
     title: 'Task History',
+    html: `<div id="history-root">${loadingHtml('Loading history…')}</div>`,
+    async mount(root) {
+      const container = root.querySelector('#history-root');
+      const profile = authService.getProfile();
+      if (!profile) { location.hash = '#/profile/create'; return; }
+      const [history, tasks] = await Promise.all([
+        submissionService.getByUser(profile.id),
+        taskService.getAllTasks(),
+      ]);
+      const taskMap = Object.fromEntries(tasks.map((t) => [t.id, t]));
+      if (!history.length) {
+        container.innerHTML = emptyStateHtml({
+          icon: '🗂️',
+          title: 'No task history',
+          message: 'Tasks you complete will appear here after admin review.',
+          actionHtml: '<a class="btn btn-primary" href="#/">BROWSE TASKS</a>',
+        });
+        return;
+      }
+      container.innerHTML = history.map((s) => {
+        const t = taskMap[s.taskId];
+        return `
+        <div class="list-item">
+          <div class="grow">
+            <div class="title">${escapeHtml(t ? t.title : s.taskId)}</div>
+            <div class="sub">${escapeHtml(s.submittedAt)} · Reward: ${t ? t.reward : '—'} Coins</div>
+          </div>
+          ${badge(s.status === 'pending' ? 'pending-review' : s.status, s.status === 'pending' ? 'Pending Review' : s.status)}
+        </div>`;
+      }).join('');
+    },
+  };
+}
+
+// User self-logout (frontend state only — real session work in Phase 2)
+export async function handleUserLogout() {
+  const ok = await openConfirm({
+    title: 'Log out?',
+    message: 'Your profile is stored on this device only. You can create a new profile when you return.',
+    confirmText: 'LOGOUT',
+    danger: true,
+  });
+  if (!ok) return;
+  await authService.logout();
+  showToast('Logged out (demo).', 'success');
+  location.hash = '#/profile/create';
+}
