@@ -1,0 +1,45 @@
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+build/
+out/
+
+# Logs
+*.log
+server.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Supabase (if using CLI)
+supabase/.env
+supabase/.temp/
+supabase/config.toml
+
+# Secrets
+*.pem
+*.key
+*.crt
+secrets.json
+credentials.json
+
+# Runtime data
+*.sqlite
+*.db
+
+# Temporary files
+tmp/
+temp/
+*.tmp
