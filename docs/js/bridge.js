@@ -33,20 +33,13 @@ const mockSettings = {
 const realAuthService = {
   ...realServices.authService,
   async getProfile() {
-    // Check Supabase session first
-    const session = await realServices.authService.getSession();
-    if (!session) {
-      return null;
-    }
-    // Get profile from profiles table using supabase client from realServices
     try {
-      const user = await realServices.authService.getUser();
-      if (!user) return null;
-      
+      const session = await realServices.authService.getSession();
+      if (!session) {
+        return null;
+      }
       // Use profileService from realServices to get profile
       const profile = await realServices.profileService.getProfile();
-      
-      if (!profile) return null;
       return profile;
     } catch {
       return null;
