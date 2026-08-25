@@ -43,11 +43,7 @@ const realAuthService = {
       if (!user) return null;
       
       // Use the supabase client directly from realServices
-      const { data: profile, error } = await realServices.supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', user.id)
-        .single();
+      const { data: profile, error } = await realServices.profileService.getProfile();
       
       if (error) return null;
       return profile;
