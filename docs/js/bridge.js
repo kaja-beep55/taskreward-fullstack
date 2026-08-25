@@ -6,6 +6,7 @@
 import { isSupabaseConfigured } from '../backend/js/supabase.js';
 import * as mockServices from './services.js';
 import * as realServices from '../backend/js/services.js';
+import { supabase } from '../backend/js/supabase.js';
 
 // Determine which backend to use
 const useRealBackend = isSupabaseConfigured();
