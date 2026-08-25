@@ -64,7 +64,7 @@ export const authService = {
 
   // TODO Phase 2: UPDATE profiles SET ... WHERE id = auth.uid()
   async updateProfile(updates) {
-    await simulateLatency(150);
+    await simulateLatency(60);
     const profile = { ...this.getProfile(), ...updates };
     LS.write(this.PROFILE_KEY, profile);
     return profile;
@@ -74,13 +74,13 @@ export const authService = {
   // NOTE: frontend-only state clear. Real session invalidation
   // happens server-side in Phase 2/3.
   async logout() {
-    await simulateLatency(150);
+    await simulateLatency(60);
     LS.remove(this.PROFILE_KEY);
   },
 
   // TODO Phase 2: real recovery via secure function
   async recoverAccount(code) {
-    await simulateLatency(300);
+    await simulateLatency(60);
     const profile = this.getProfile();
     if (!profile) throw new Error('No profile found on this device. Create a new profile first.');
     return profile;
@@ -89,6 +89,12 @@ export const authService = {
   // Check if current user is admin (mock: always false)
   async isAdmin() {
     return false;
+  },
+
+  // Return the current profile's recovery code (mock: from local profile)
+  async getRecoveryCode() {
+    const p = this.getProfile();
+    return p ? (p.recoveryCode || null) : null;
   },
 };
 
@@ -104,19 +110,19 @@ export const taskService = {
 
   // TODO Phase 2: .select('*').eq('status','published')
   async getPublishedTasks() {
-    await simulateLatency(300);
+    await simulateLatency(60);
     return this._all().filter((t) => t.status === 'published');
   },
 
   // TODO Phase 2: .select('*') (admin sees everything)
   async getAllTasks() {
-    await simulateLatency(300);
+    await simulateLatency(60);
     return this._all();
   },
 
   // TODO Phase 2: .select('*').eq('id', id).single()
   async getTaskById(id) {
-    await simulateLatency(150);
+    await simulateLatency(60);
     return this._all().find((t) => t.id === id) || null;
   },
 
@@ -167,17 +173,17 @@ export const userService = {
   _save(users) { LS.write(this.KEY, users); },
 
   async getUsers() {
-    await simulateLatency(300);
+    await simulateLatency(60);
     return this._all();
   },
 
   async getUserById(id) {
-    await simulateLatency(150);
+    await simulateLatency(60);
     return this._all().find((u) => u.id === id) || null;
   },
 
   async searchUsers(query) {
-    await simulateLatency(200);
+    await simulateLatency(60);
     const q = query.trim().toLowerCase();
     if (!q) return this._all();
     return this._all().filter(
@@ -216,14 +222,14 @@ export const coinService = {
 
   // TODO Phase 5: SELECT * FROM coin_ledger WHERE user_id = $1
   async getHistory(userId) {
-    await simulateLatency(150);
+    await simulateLatency(60);
     return this._all()
       .filter((t) => t.userId === userId)
       .sort((a, b) => (a.date < b.date ? 1 : -1));
   },
 
   async getAllTransactions() {
-    await simulateLatency(250);
+    await simulateLatency(60);
     return this._all().slice().sort((a, b) => (a.date < b.date ? 1 : -1));
   },
 
@@ -271,12 +277,12 @@ export const submissionService = {
   _save(s) { LS.write(this.KEY, s); },
 
   async getByUser(userId) {
-    await simulateLatency(150);
+    await simulateLatency(60);
     return this._all().filter((s) => s.userId === userId);
   },
 
   async getPending() {
-    await simulateLatency(250);
+    await simulateLatency(60);
     return this._all().filter((s) => s.status === 'pending');
   },
 
@@ -319,7 +325,7 @@ export const adminService = {
   // flow. TODO Phase 3: POST to a secure backend endpoint that
   // verifies a hashed credential and issues a server session.
   async login(password) {
-    await simulateLatency(400);
+    await simulateLatency(60);
     if (typeof password !== 'string' || password.length !== 10) {
       throw new Error('Password must be exactly 10 characters.');
     }
@@ -328,7 +334,7 @@ export const adminService = {
   },
 
   async logout() {
-    await simulateLatency(150);
+    await simulateLatency(60);
     LS.remove(this.KEY);
   },
 };
