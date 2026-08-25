@@ -287,8 +287,28 @@ export async function ProfileRecoverPage() {
         }
         
         try {
-          const profile = await authService.recoverAccount(code);
-          showToast(`Welcome back, ${profile.name}! 🎉`, 'success');
+          // Use Edge Function if available, fallback to RPC
+          let profile;
+          try {
+            const edgeResult = await fetch(`${window.__ENV__?.SUPABASE_URL || ''}/functions/v1/recover-session`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${window.__ENV__?.SUPABASE_ANON_KEY || ''}`,
+              },
+              body: JSON.stringify({ recovery_code: code }),
+            });
+            if (edgeResult.ok) {
+              profile = await edgeResult.json();
+            } else {
+              throw new Error('Edge function unavailable');
+            }
+          } catch {
+            // Fallback to RPC if Edge Function not deployed
+            profile = await authService.recoverAccount(code);
+          }
+          
+          showToast(`Welcome back, ${profile.name || profile.profile?.name}! 🎉`, 'success');
           location.hash = '#/profile';
         } catch (err) {
           showToast(err.message || 'Invalid recovery code.', 'error');
