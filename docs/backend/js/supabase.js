@@ -25,20 +25,16 @@ const getEnv = (key, fallback = '') => {
   return fallback;
 };
 
-const SUPABASE_URL = getEnv('SUPABASE_URL', '');
-const SUPABASE_ANON_KEY = getEnv('SUPABASE_ANON_KEY', '');
-const SUPABASE_PUBLISHABLE_KEY = getEnv('SUPABASE_PUBLISHABLE_KEY', '');
-
-// Use publishable key if anon key not set (new Supabase format)
-const API_KEY = SUPABASE_ANON_KEY || SUPABASE_PUBLISHABLE_KEY;
+const SUPABASE_URL = getEnv('SUPABASE_URL', 'https://vdiikrxljouwymrleook.supabase.co');
+const SUPABASE_ANON_KEY = getEnv('SUPABASE_ANON_KEY', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZkaWlrcnhsam91d3ltcmxlb29rIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc1NjAzODgsImV4cCI6MjEwMzEzNjM4OH0.RgHDeZ5qJP76Bglt1I9kGFr_8JgSvLoBoNtVuHOuCXM');
 
 // Validate configuration
-if (!SUPABASE_URL || !API_KEY) {
-  console.warn('⚠️ Supabase not configured. Set SUPABASE_URL and SUPABASE_ANON_KEY (or SUPABASE_PUBLISHABLE_KEY) environment variables.');
+if (SUPABASE_URL === 'YOUR_SUPABASE_URL' || SUPABASE_ANON_KEY === 'YOUR_SUPABASE_ANON_KEY') {
+  console.warn('⚠️ Supabase not configured. Using mock mode. Set SUPABASE_URL and SUPABASE_ANON_KEY environment variables.');
 }
 
 // Create Supabase client
-export const supabase = createClient(SUPABASE_URL, API_KEY, {
+export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
   auth: {
     autoRefreshToken: true,
     persistSession: true,
@@ -50,8 +46,8 @@ export const supabase = createClient(SUPABASE_URL, API_KEY, {
 // Helper: Check if Supabase is properly configured
 // ============================================================
 export function isSupabaseConfigured() {
-  return SUPABASE_URL !== '' && 
-         API_KEY !== '' &&
+  return SUPABASE_URL !== 'YOUR_SUPABASE_URL' && 
+         SUPABASE_ANON_KEY !== 'YOUR_SUPABASE_ANON_KEY' &&
          SUPABASE_URL.includes('supabase.co');
 }
 
