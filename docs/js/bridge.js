@@ -34,7 +34,7 @@ const realAuthService = {
   ...realServices.authService,
   async getProfile() {
     try {
-      // Check if we have a session (authService.getSession returns session directly)
+      // Check if we have a session (getSession returns session directly)
       const session = await realServices.authService.getSession();
       if (!session || !session.user) {
         return null;
