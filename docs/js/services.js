@@ -108,6 +108,12 @@ export const taskService = {
   _all() { return seed(this.KEY, MOCK_TASKS); },
   _save(tasks) { LS.write(this.KEY, tasks); },
 
+  async deleteTask(id) {
+    const remaining = this._all().filter((t) => t.id !== id);
+    this._save(remaining);
+    return true;
+  },
+
   // TODO Phase 2: .select('*').eq('status','published')
   async getPublishedTasks() {
     await simulateLatency(60);

@@ -207,6 +207,7 @@ document.addEventListener('click', (e) => {
     case 'user-logout': handleUserLogout(); break;
     case 'admin-logout': handleAdminLogout(); break;
     case 'archive-task': handleArchiveTask(id, title); break;
+    case 'delete-task': handleDeleteTask(id, title); break;
     case 'approve-submission': handleReview(id, 'approved'); break;
     case 'reject-submission': handleReview(id, 'rejected'); break;
     case 'block-user': handleBlockUser(id, name); break;

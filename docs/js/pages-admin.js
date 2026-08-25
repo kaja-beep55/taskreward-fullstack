@@ -155,6 +155,7 @@ export async function AdminTasksPage() {
             <div class="actions">
               <a class="btn btn-outline btn-sm" href="#/admin/tasks/${t.id}/edit">EDIT</a>
               <button class="btn btn-danger-outline btn-sm" data-action="archive-task" data-id="${t.id}" data-title="${escapeHtml(t.title)}" ${t.status === 'archived' ? 'disabled' : ''}>ARCHIVE</button>
+              <button class="btn btn-danger btn-sm" data-action="delete-task" data-id="${t.id}" data-title="${escapeHtml(t.title)}">DELETE</button>
             </div>
           </div>`).join('') : emptyStateHtml({
             icon: '📋',
@@ -242,6 +243,10 @@ export async function AdminTaskFormPage(taskId) {
             <input id="tf-time" name="estTime" type="text" placeholder="e.g. 5 min" value="${v('estTime')}">
           </div>
           <div class="field">
+            <label for="tf-tags">Tags <span class="hint">(comma separated)</span></label>
+            <input id="tf-tags" name="tags" type="text" placeholder="app, install, video" value="${task && Array.isArray(task.tags) ? escapeHtml(task.tags.join(', ')) : v('tags')}">
+          </div>
+          <div class="field">
             <label for="tf-status">Task Status</label>
             <select id="tf-status" name="status">
               ${['draft', 'published', 'archived'].map((s) => `<option value="${s}" ${s === defaultStatus ? 'selected' : ''}>${s[0].toUpperCase() + s.slice(1)}</option>`).join('')}
@@ -286,6 +291,7 @@ export async function AdminTaskFormPage(taskId) {
           reward: Number(fd.get('reward')) || 0,
           estTime: String(fd.get('estTime') || '').trim(),
           imageData: String(fd.get('imageData') || '') || null,
+          tags: String(fd.get('tags') || '').split(',').map((t) => t.trim()).filter(Boolean),
         };
         if (!data.title || !data.shortDesc || !data.fullDesc || !data.targetUrl || !data.reward) {
           showToast('Please fill in all required fields.', 'error');
@@ -309,6 +315,21 @@ export async function AdminTaskFormPage(taskId) {
       });
     },
   };
+}
+
+// Handle delete task with confirmation
+export async function handleDeleteTask(taskId, title) {
+  const { showToast } = await import('./ui.js');
+  const ok = await confirmModal({
+    title: 'Delete Task',
+    message: `Permanently delete "${title}"? This cannot be undone.`,
+    confirmText: 'DELETE',
+    danger: true,
+  });
+  if (!ok) return;
+  await taskService.deleteTask(taskId);
+  showToast('Task deleted.', 'success');
+  location.hash = '#/admin/tasks';
 }
 
 // ============================================================
