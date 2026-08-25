@@ -176,7 +176,7 @@ async function render() {
     document.title = `${page.title || 'Home'} — ${settingsService.getAll().appName}`;
 
     if (route.kind === 'admin') {
-      app.innerHTML = adminShell(page.html, hash);
+      app.innerHTML = route.public ? page.html : adminShell(page.html, hash);
     } else {
       app.innerHTML = userShell(page.html, hash);
     }
