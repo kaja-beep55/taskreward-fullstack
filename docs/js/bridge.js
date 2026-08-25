@@ -28,12 +28,22 @@ const mockSettings = {
   save() {},
 };
 
-// Real backend authService with getProfile fallback
+// Real backend authService with getProfile using Supabase
 const realAuthService = {
   ...realServices.authService,
-  getProfile() {
-    // Real backend doesn't have getProfile — return null (router will handle)
-    return null;
+  async getProfile() {
+    // Check Supabase session first
+    const session = await realServices.authService.getSession();
+    if (!session) {
+      return null;
+    }
+    // Get profile from profiles table
+    try {
+      const profile = await realServices.profileService.getProfile();
+      return profile;
+    } catch {
+      return null;
+    }
   },
 };
 
