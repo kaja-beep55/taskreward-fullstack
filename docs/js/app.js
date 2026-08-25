@@ -7,9 +7,10 @@ import { CONFIG, settingsService } from './config.js';
 import { authService, adminService } from './bridge.js';
 import { openWhatsApp, errorStateHtml, escapeHtml } from './ui.js';
 import {
-  HomePage, TaskDetailPage, ProfileCreatePage, ProfileRecoverPage, ProfilePage,
+  HomePage, TaskDetailPage, ProfileCreatePage, ProfilePage,
   ProfileEditPage, TaskHistoryPage, handleUserLogout,
 } from './pages-user.js';
+import { ProfileRecoverPage } from './recovery-ui.js';
 import {
   AdminLoginPage, AdminDashboardPage, AdminTasksPage, AdminTaskFormPage,
   AdminUsersPage, AdminUserDetailPage, AdminCoinsPage, AdminCoinHistoryPage,
